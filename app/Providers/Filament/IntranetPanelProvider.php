@@ -30,12 +30,12 @@ class IntranetPanelProvider extends PanelProvider
             ->login()
             ->colors([
                 'primary' => '#0A0A4D',
-                'secondary' => '#FF9900',
-                'tertiary' => '#FFFF00',
-                'accent' => '#00FFF0',
-                'success' => '#00FF00',
-                'info' => '#00FFFF',
-                'warning' => '#FF0000',
+                'secondary' => '#1a1a6b',
+                'accent' => '#E30613',
+                'success' => '#10B981',
+                'warning' => '#F59E0B',
+                'danger' => '#EF4444',
+                'info' => '#3B82F6',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
