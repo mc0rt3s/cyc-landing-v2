@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminUserSeeder::class,
             CcStaffSeeder::class,
+            EntitySeeder::class,
         ]);
 
         // Crear usuarios de prueba (solo en desarrollo)

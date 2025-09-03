@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Log;
 
 class FilamentColorServiceProvider extends ServiceProvider
 {
@@ -18,7 +19,7 @@ class FilamentColorServiceProvider extends ServiceProvider
     /**
      * Bootstrap services.
      */
-    public function boot(): void
+        public function boot(): void
     {
         // Registrar colores corporativos de CYC
         FilamentColor::register([

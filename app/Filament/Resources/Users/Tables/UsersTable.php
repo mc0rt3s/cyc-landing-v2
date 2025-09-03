@@ -39,15 +39,17 @@ class UsersTable
             ->filters([
                 //
             ])
-            ->recordActions([
+            ->actions([
                 ViewAction::make()->label('Ver'),
                 EditAction::make()->label('Editar'),
             ])
-            ->toolbarActions([
+            ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()->label('Eliminar Seleccionados'),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->searchable()
+            ->paginated([10, 25, 50]);
     }
 }

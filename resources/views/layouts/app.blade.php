@@ -6,7 +6,7 @@
     <title>{{ config('app.name') }}</title>
 
     <!-- CSS compilado -->
-    <link rel="stylesheet" href="{{ asset('build/assets/app-BZAfC9bv.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/app-0PkZ_gbb.css') }}">
 
     <!-- JavaScript compilado -->
     <script src="{{ asset('build/assets/app-C0G0cght.js') }}" defer></script>
