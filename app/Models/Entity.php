@@ -289,7 +289,7 @@ class Entity extends Model
      */
     public function partnerships(): HasMany
     {
-        return $this->hasMany(Partner::class, 'partner_dni', 'dni');
+        return $this->hasMany(EntityPartnership::class, 'partner_dni', 'dni');
     }
 
     /**
@@ -297,7 +297,31 @@ class Entity extends Model
      */
     public function partners(): HasMany
     {
-        return $this->hasMany(Partner::class, 'company_dni', 'dni');
+        return $this->hasMany(EntityPartnership::class, 'entity_dni', 'dni');
+    }
+
+    /**
+     * Relación con los socios activos de esta entidad (si es empresa).
+     */
+    public function activePartners(): HasMany
+    {
+        return $this->partners()->where('is_active', true);
+    }
+
+    /**
+     * Obtiene el porcentaje total de participación de los socios.
+     */
+    public function getTotalParticipationPercentageAttribute(): float
+    {
+        return $this->activePartners()->sum('participation_percentage');
+    }
+
+    /**
+     * Verifica si la empresa tiene socios.
+     */
+    public function hasPartners(): bool
+    {
+        return $this->activePartners()->exists();
     }
 
     /**
@@ -404,6 +428,7 @@ class Entity extends Model
 
     /**
      * Obtiene el DNI formateado con puntos y guión.
+     * Los RUTs menores a 10.000.000 tendrán un 0 al inicio.
      */
     public function getFormattedDniAttribute(): string
     {
@@ -424,8 +449,18 @@ class Entity extends Model
         $number = substr($dni, 0, -1);
         $dv = substr($dni, -1);
 
-        // Formatear número con puntos
-        $formattedNumber = number_format($number, 0, '', '.');
+        // Agregar 0 al inicio si el número es menor a 10.000.000
+        if ((int)$number < 10000000) {
+            $number = '0' . $number;
+        }
+
+        // Formatear número con puntos, manteniendo el 0 al inicio si existe
+        if (strlen($number) == 8 && $number[0] == '0') {
+            // Para números con 0 al inicio, formatear manualmente
+            $formattedNumber = '0' . number_format((int)substr($number, 1), 0, '', '.');
+        } else {
+            $formattedNumber = number_format((int)$number, 0, '', '.');
+        }
 
         return $formattedNumber . '-' . $dv;
     }

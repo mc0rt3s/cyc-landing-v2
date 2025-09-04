@@ -32,7 +32,7 @@ class EntityForm
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(12)
-                    ->helperText('Formato: 12345678-9 o 12.345.678-9')
+                    ->helperText('Formato: 12345678-9 o 12.345.678-9 (RUTs menores a 10.000.000 tendrán 0 al inicio)')
                     ->placeholder('Ej: 12345678-9')
                     ->afterStateHydrated(function ($state, $set) {
                         if ($state) {
@@ -41,7 +41,19 @@ class EntityForm
                             if (strlen($clean) >= 7) {
                                 $number = substr($clean, 0, -1);
                                 $dv = substr($clean, -1);
-                                $formatted = number_format($number, 0, '', '.') . '-' . $dv;
+
+                                // Agregar 0 al inicio si el número es menor a 10.000.000
+                                if ((int)$number < 10000000) {
+                                    $number = '0' . $number;
+                                }
+
+                                // Formatear número con puntos, manteniendo el 0 al inicio si existe
+                                if (strlen($number) == 8 && $number[0] == '0') {
+                                    $formatted = '0' . number_format((int)substr($number, 1), 0, '', '.') . '-' . $dv;
+                                } else {
+                                    $formatted = number_format((int)$number, 0, '', '.') . '-' . $dv;
+                                }
+
                                 $set('dni', $formatted);
                             }
                         }
@@ -53,7 +65,19 @@ class EntityForm
                             if (strlen($clean) >= 7) {
                                 $number = substr($clean, 0, -1);
                                 $dv = substr($clean, -1);
-                                $formatted = number_format($number, 0, '', '.') . '-' . $dv;
+
+                                // Agregar 0 al inicio si el número es menor a 10.000.000
+                                if ((int)$number < 10000000) {
+                                    $number = '0' . $number;
+                                }
+
+                                // Formatear número con puntos, manteniendo el 0 al inicio si existe
+                                if (strlen($number) == 8 && $number[0] == '0') {
+                                    $formatted = '0' . number_format((int)substr($number, 1), 0, '', '.') . '-' . $dv;
+                                } else {
+                                    $formatted = number_format((int)$number, 0, '', '.') . '-' . $dv;
+                                }
+
                                 $set('dni', $formatted);
                             }
                         }

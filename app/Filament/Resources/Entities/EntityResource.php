@@ -44,7 +44,7 @@ class EntityResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            \App\Filament\Resources\Entities\RelationManagers\PartnersRelationManager::class,
         ];
     }
 
