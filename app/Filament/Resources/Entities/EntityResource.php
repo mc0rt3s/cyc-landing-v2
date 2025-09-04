@@ -22,7 +22,7 @@ class EntityResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
 
-    protected static ?string $recordTitleAttribute = 'display_name';
+    protected static ?string $recordTitleAttribute = 'first_name';
 
     protected static string | UnitEnum | null $navigationGroup = 'Gestión de Clientes';
     protected static ?string $navigationLabel = 'Contribuyentes';
@@ -30,6 +30,8 @@ class EntityResource extends Resource
     protected static ?string $pluralModelLabel = 'Contribuyentes';
 
     protected static ?int $navigationSort = 1;
+
+    protected static int $globalSearchResultsLimit = 20;
 
     public static function form(Schema $schema): Schema
     {
@@ -66,5 +68,29 @@ class EntityResource extends Resource
     public static function getNavigationBadgeColor(): string|array|null
     {
         return 'success';
+    }
+
+    public static function getGlobalSearchResultTitle($record): string
+    {
+        return $record->display_name;
+    }
+
+    public static function getGlobalSearchResultDetails($record): array
+    {
+        return [
+            'RUT' => $record->formatted_dni,
+            'Tipo' => $record->type_label,
+            'Email' => $record->email,
+        ];
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['dni', 'first_name', 'last_name', 'business_name', 'commercial_name', 'email'];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->where('is_client', true);
     }
 }
