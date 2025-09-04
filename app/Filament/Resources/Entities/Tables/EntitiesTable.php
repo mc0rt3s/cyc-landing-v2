@@ -253,7 +253,7 @@ class EntitiesTable
                 ]),
             ])
             ->defaultSort('created_at', 'desc')
-            ->searchable()
+            ->searchable(['dni', 'first_name', 'last_name', 'business_name', 'commercial_name', 'email', 'phone', 'city'])
             ->searchPlaceholder('Buscar por RUT, nombre, email, teléfono, ciudad...')
             ->paginated([10, 25, 50, 100])
             ->striped()

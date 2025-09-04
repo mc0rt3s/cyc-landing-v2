@@ -401,12 +401,12 @@ class Entity extends Model
         return $query->where(function ($q) use ($search) {
             // Limpiar el término de búsqueda para DNI
             $cleanSearch = preg_replace('/[^0-9kK]/', '', $search);
-            
+
             // Búsqueda por DNI (con y sin formato)
             if (!empty($cleanSearch)) {
                 $q->where('dni', 'like', "%{$cleanSearch}%");
             }
-            
+
             // Búsqueda por nombres (personas)
             $q->orWhere('first_name', 'like', "%{$search}%")
               ->orWhere('last_name', 'like', "%{$search}%")
@@ -415,17 +415,17 @@ class Entity extends Model
                   $subQuery->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$search}%"])
                            ->orWhereRaw("CONCAT(last_name, ' ', first_name) LIKE ?", ["%{$search}%"]);
               });
-            
+
             // Búsqueda por nombres de empresa
             $q->orWhere('business_name', 'like', "%{$search}%")
               ->orWhere('commercial_name', 'like', "%{$search}%");
-            
+
             // Búsqueda por email
             $q->orWhere('email', 'like', "%{$search}%");
-            
+
             // Búsqueda por teléfono
             $q->orWhere('phone', 'like', "%{$search}%");
-            
+
             // Búsqueda por ciudad
             $q->orWhere('city', 'like', "%{$search}%");
         });
