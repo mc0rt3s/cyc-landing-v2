@@ -22,7 +22,7 @@ class EntityResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
 
-    protected static ?string $recordTitleAttribute = 'first_name';
+    protected static ?string $recordTitleAttribute = null;
 
     protected static string | UnitEnum | null $navigationGroup = 'Gestión de Clientes';
     protected static ?string $navigationLabel = 'Contribuyentes';
@@ -92,5 +92,23 @@ class EntityResource extends Resource
     public static function getGlobalSearchEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return parent::getGlobalSearchEloquentQuery()->where('is_client', true);
+    }
+
+    public static function getGlobalSearchResultsUsing(): ?\Closure
+    {
+        return function (string $search): \Illuminate\Database\Eloquent\Collection {
+            return static::getModel()::query()
+                ->where('is_client', true)
+                ->where(function ($query) use ($search) {
+                    $query->where('dni', 'like', "%{$search}%")
+                          ->orWhere('first_name', 'like', "%{$search}%")
+                          ->orWhere('last_name', 'like', "%{$search}%")
+                          ->orWhere('business_name', 'like', "%{$search}%")
+                          ->orWhere('commercial_name', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%");
+                })
+                ->limit(static::$globalSearchResultsLimit)
+                ->get();
+        };
     }
 }
