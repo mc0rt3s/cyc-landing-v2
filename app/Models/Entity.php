@@ -389,17 +389,48 @@ class Entity extends Model
     }
 
     /**
-     * Scope para buscar por nombre o DNI.
+     * Scope para buscar por nombre, DNI, email y otros campos.
+     * Maneja búsqueda con y sin formato de RUT.
      */
     public function scopeSearch(Builder $query, string $search): Builder
     {
+        if (empty($search)) {
+            return $query;
+        }
+
         return $query->where(function ($q) use ($search) {
-            $q->where('dni', 'like', "%{$search}%")
-              ->orWhere('first_name', 'like', "%{$search}%")
+            // Limpiar el término de búsqueda para DNI
+            $cleanSearch = preg_replace('/[^0-9kK]/', '', $search);
+            
+            // Búsqueda por DNI (con y sin formato)
+            $q->where('dni', 'like', "%{$cleanSearch}%");
+            
+            // Si el término de búsqueda tiene formato de RUT, también buscar sin formato
+            if (preg_match('/[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]/', $search)) {
+                $q->orWhere('dni', 'like', "%{$cleanSearch}%");
+            }
+            
+            // Búsqueda por nombres (personas)
+            $q->orWhere('first_name', 'like', "%{$search}%")
               ->orWhere('last_name', 'like', "%{$search}%")
-              ->orWhere('business_name', 'like', "%{$search}%")
-              ->orWhere('commercial_name', 'like', "%{$search}%")
-              ->orWhere('email', 'like', "%{$search}%");
+              ->orWhere(function ($subQuery) use ($search) {
+                  // Búsqueda por nombre completo (concatenado)
+                  $subQuery->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$search}%"])
+                           ->orWhereRaw("CONCAT(last_name, ' ', first_name) LIKE ?", ["%{$search}%"]);
+              });
+            
+            // Búsqueda por nombres de empresa
+            $q->orWhere('business_name', 'like', "%{$search}%")
+              ->orWhere('commercial_name', 'like', "%{$search}%");
+            
+            // Búsqueda por email
+            $q->orWhere('email', 'like', "%{$search}%");
+            
+            // Búsqueda por teléfono
+            $q->orWhere('phone', 'like', "%{$search}%");
+            
+            // Búsqueda por ciudad
+            $q->orWhere('city', 'like', "%{$search}%");
         });
     }
 

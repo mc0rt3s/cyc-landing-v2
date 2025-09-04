@@ -31,7 +31,7 @@ class EntitiesTable
             ->columns([
                 TextColumn::make('formatted_dni')
                     ->label('RUT')
-                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->where('dni', 'like', "%{$search}%"))
+                    ->searchable(['dni'])
                     ->sortable(query: fn (Builder $query, string $direction): Builder => $query->orderBy('dni', $direction))
                     ->copyable()
                     ->copyMessage('RUT copiado al portapapeles')
@@ -142,14 +142,21 @@ class EntitiesTable
                     ->trueLabel('Solo clientes')
                     ->falseLabel('Solo no clientes'),
 
-                Filter::make('search')
+                Filter::make('advanced_search')
                     ->form([
                         TextInput::make('search')
-                            ->label('Buscar')
-                            ->placeholder('Buscar por nombre, RUT, email...'),
+                            ->label('Búsqueda Avanzada')
+                            ->placeholder('RUT, nombre, email, teléfono, ciudad...')
+                            ->helperText('Busca en todos los campos: RUT (con o sin formato), nombres, emails, teléfonos y ciudades'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query->search($data['search'] ?? '');
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if (empty($data['search'])) {
+                            return null;
+                        }
+                        return 'Búsqueda: ' . $data['search'];
                     }),
             ])
             ->actions([
@@ -247,6 +254,7 @@ class EntitiesTable
             ])
             ->defaultSort('created_at', 'desc')
             ->searchable()
+            ->searchPlaceholder('Buscar por RUT, nombre, email, teléfono, ciudad...')
             ->paginated([10, 25, 50, 100])
             ->striped()
             ->deferLoading();

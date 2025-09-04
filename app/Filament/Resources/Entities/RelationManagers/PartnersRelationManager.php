@@ -33,10 +33,11 @@ class PartnersRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'partner.display_name';
 
+    // La mejor funcion para verificar si se puede ver el relation manager
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
-{
-    return $ownerRecord->type === 'company';
-}
+    {
+        return $ownerRecord->type === 'company';
+    }
 
     public function form(Schema $schema): Schema
     {
