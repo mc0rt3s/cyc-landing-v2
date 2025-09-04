@@ -403,11 +403,8 @@ class Entity extends Model
             $cleanSearch = preg_replace('/[^0-9kK]/', '', $search);
             
             // Búsqueda por DNI (con y sin formato)
-            $q->where('dni', 'like', "%{$cleanSearch}%");
-            
-            // Si el término de búsqueda tiene formato de RUT, también buscar sin formato
-            if (preg_match('/[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]/', $search)) {
-                $q->orWhere('dni', 'like', "%{$cleanSearch}%");
+            if (!empty($cleanSearch)) {
+                $q->where('dni', 'like', "%{$cleanSearch}%");
             }
             
             // Búsqueda por nombres (personas)

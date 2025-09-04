@@ -39,7 +39,7 @@ class EntitiesTable
 
                 TextColumn::make('display_name')
                     ->label('Nombre')
-                    ->searchable()
+                    ->searchable(['first_name', 'last_name', 'business_name', 'commercial_name'])
                     ->sortable()
                     ->limit(50),
 
